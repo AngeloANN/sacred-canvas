@@ -1,24 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import lamp from "@/assets/lamp-mask.png";
+import { Header } from "@/components/store/header";
+export const Route = createFileRoute("/")({ head: () => ({ meta: [{ title: "ICXC — Sacred Canvas" }, { name: "description", content: "Enter a dark, reverent collection of original sacred canvas artwork." }, { property: "og:title", content: "ICXC — Sacred Canvas" }, { property: "og:description", content: "Enter a dark, reverent collection of original sacred canvas artwork." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: Index });
+function Index() { const [skipped, setSkipped] = useState(false); return <main className="relative min-h-screen overflow-hidden bg-night text-ivory"><Header/><div className="grid min-h-screen grid-rows-[56vh_1fr] items-center pt-16 md:grid-cols-2 md:grid-rows-1"><div className="relative flex h-full items-end justify-center md:items-center"><div className={`${skipped ? "opacity-100" : "animate-glow-wake"} absolute left-[58%] top-[28%] h-[52%] w-[70%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--color-ember)_0%,transparent_67%)] opacity-40 blur-3xl`}/><img src={lamp} width={1024} height={1408} alt="Antique lamp with a hanging mask" className={`${skipped ? "brightness-100 saturate-100" : "animate-lamp-wake"} relative z-10 h-[92%] w-auto max-w-[88%] object-contain object-bottom md:h-[82vh]`}/></div><div className={`${skipped ? "opacity-100" : "animate-reveal"} z-10 flex flex-col items-center pb-14 text-center md:items-start md:pb-0 md:text-left`}><h1 className="font-display text-[clamp(5rem,12vw,11rem)] font-normal leading-none text-ivory drop-shadow-[0_0_22px_var(--color-ember)]">ICXC</h1><p className="mt-2 text-2xl italic text-ivory/80 md:text-3xl">Talitha cumi</p><Link to="/gallery" className="mt-10 border-b border-ivory/40 pb-1 text-sm uppercase text-ivory transition-colors hover:border-ember hover:text-ember">Enter the Gallery</Link></div></div><button onClick={() => setSkipped(true)} className="absolute bottom-5 right-5 z-20 text-xs uppercase text-ivory/55 hover:text-ivory">Skip intro</button></main>; }
