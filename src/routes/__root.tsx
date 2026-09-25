@@ -79,10 +79,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ICXC — Sacred Canvas" },
-      { name: "description", content: "Original sacred canvas artwork in a cinematic virtual gallery." },
+      {
+        name: "description",
+        content: "Original sacred canvas artwork in a cinematic virtual gallery.",
+      },
       { name: "author", content: "ICXC" },
       { property: "og:title", content: "ICXC — Sacred Canvas" },
-      { property: "og:description", content: "Original sacred canvas artwork in a cinematic virtual gallery." },
+      {
+        property: "og:description",
+        content: "Original sacred canvas artwork in a cinematic virtual gallery.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -94,7 +100,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Grenze+Gotisch:wght@400;500;600&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Grenze+Gotisch:wght@400;500;600&display=swap",
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -123,7 +132,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider><Outlet /></CartProvider>
+      <CartProvider>
+        <Outlet />
+      </CartProvider>
     </QueryClientProvider>
   );
 }
