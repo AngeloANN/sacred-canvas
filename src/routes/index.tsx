@@ -5,7 +5,7 @@ import { Header } from "@/components/store/header";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ICXC — Sacred Canvas" },
+      { title: "ICXC XZS" },
       {
         name: "description",
         content: "Enter a dark, reverent collection of original sacred canvas artwork.",
@@ -69,7 +69,7 @@ function Index() {
         <div className="relative h-[62vh] w-full md:absolute md:inset-0 md:top-16 md:h-auto">
           {useStill ? (
             <img
-              src="/lamp-on.jpg"
+              src="/lamp-on.png"
               alt="Antique lamp with a mask hanging on it, glowing warmly"
               className={mediaClass}
             />
@@ -77,7 +77,7 @@ function Index() {
             <video
               ref={videoRef}
               src="/lamp-intro.mp4"
-              poster="/lamp-on.jpg"
+              poster="/lamp-on.png"
               autoPlay
               muted
               playsInline
@@ -99,10 +99,10 @@ function Index() {
             showText ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
           }`}
         >
-          <h1 className="font-display text-[clamp(4.5rem,11vw,10rem)] font-normal leading-none text-ivory drop-shadow-[0_0_22px_var(--color-ember)]">
-            ICXC
+          <h1 className="font-display text-[clamp(3.5rem,8vw,8rem)] font-normal leading-none text-ivory drop-shadow-[0_0_2px_var(--color-ember)]">
+            ICXC XZS
           </h1>
-          <p className="mt-2 text-2xl italic text-ivory/80 md:text-3xl">Talitha cumi</p>
+          <p className="mt-3 text-3xl text-ivory/80 md:text-3xl">Talitha cumi</p>
           <Link
             to="/gallery"
             className="mt-10 border-b border-ivory/40 pb-1 text-sm uppercase tracking-widest text-ivory transition-colors hover:border-ember hover:text-ember"
