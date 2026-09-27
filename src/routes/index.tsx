@@ -43,15 +43,6 @@ function Index() {
     if (video && video.currentTime >= TEXT_REVEAL_AT) setShowText(true);
   };
 
-  const skipIntro = () => {
-    const video = videoRef.current;
-    if (video && Number.isFinite(video.duration)) {
-      video.pause();
-      video.currentTime = video.duration - 0.05; // land on the lit final frame
-    }
-    setShowText(true);
-  };
-
   const handleVideoError = () => {
     setUseStill(true);
     setShowText(true);
@@ -77,7 +68,6 @@ function Index() {
             <video
               ref={videoRef}
               src="/lamp-intro.mp4"
-              poster="/lamp-on.png"
               autoPlay
               muted
               playsInline
@@ -102,24 +92,23 @@ function Index() {
           <h1 className="font-display text-[clamp(3.5rem,8vw,8rem)] font-normal leading-none text-ivory drop-shadow-[0_0_2px_var(--color-ember)]">
             ICXC XZS
           </h1>
-          <p className="mt-3 text-3xl text-ivory/80 md:text-3xl">Talitha cumi</p>
-          <Link
-            to="/gallery"
-            className="mt-10 border-b border-ivory/40 pb-1 text-sm uppercase tracking-widest text-ivory transition-colors hover:border-ember hover:text-ember"
-          >
-            Enter the Gallery
-          </Link>
+          <p className="mt-3 font-typewriter text-2xl text-ivory/80 md:text-2xl">Talitha cumi</p>
+          <div className="mt-10 flex gap-3">
+            <Link
+              to="/gallery"
+              className="rounded-full bg-ember px-7 py-2.5 text-sm uppercase tracking-widest text-night transition hover:brightness-110"
+            >
+              Gallery
+            </Link>
+            {/*<Link*/}
+            {/*  to="/fashion"*/}
+            {/*  className="rounded-full border border-ember px-7 py-2.5 text-sm uppercase tracking-widest text-ember transition hover:bg-ember hover:text-night"*/}
+            {/*>*/}
+            {/*  Fashion*/}
+            {/*</Link>*/}
+          </div>
         </div>
       </div>
-
-      {!showText && (
-        <button
-          onClick={skipIntro}
-          className="absolute bottom-5 right-5 z-20 text-xs uppercase tracking-widest text-ivory/55 hover:text-ivory"
-        >
-          Skip intro
-        </button>
-      )}
     </main>
   );
 }
