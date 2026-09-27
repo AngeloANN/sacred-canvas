@@ -100,12 +100,12 @@ function Index() {
             >
               Gallery
             </Link>
-            {/*<Link*/}
-            {/*  to="/fashion"*/}
-            {/*  className="rounded-full border border-ember px-7 py-2.5 text-sm uppercase tracking-widest text-ember transition hover:bg-ember hover:text-night"*/}
-            {/*>*/}
-            {/*  Fashion*/}
-            {/*</Link>*/}
+            <Link
+              to="/fashion"
+              className="rounded-full border border-ember px-7 py-2.5 text-sm uppercase tracking-widest text-ember transition hover:bg-ember hover:text-night"
+            >
+              Fashion
+            </Link>
           </div>
         </div>
       </div>

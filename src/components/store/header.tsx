@@ -24,9 +24,12 @@ export function Header() {
           <Link to="/gallery" activeProps={{ className: "text-ember" }}>
             Gallery
           </Link>
+          <Link to="/fashion" activeProps={{ className: "text-ember" }}>
+            Fashion
+          </Link>
         </nav>
-        <Link to="/" className="font-display absolute left-1/2 -translate-x-1/2 text-2xl">
-          ICXC
+        <Link to="/" className="absolute left-1/2 -translate-x-1/2" aria-label="ICXC XZS home">
+          <img src="/android-chrome-512x512.png" alt="ICXC XZS" className="h-10 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
           <CartDrawer />
