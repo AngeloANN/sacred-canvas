@@ -1,6 +1,8 @@
 import adam from "@/assets/destruction-of-adam.png";
 import dove from "@/assets/landing-crow.jpg";
 import reach from "@/assets/everlasting-reach.jpg";
+import knight from "@/assets/the-knight.jpg";
+import butterfly from "@/assets/gilded-butterfly.jpg";
 
 export type Artwork = {
   id: string;
@@ -53,6 +55,28 @@ export const artworks: Artwork[] = [
     height: 96,
     price: 1490,
     image: reach,
+  },
+  {
+    id: "the-knight",
+    slug: "the-knight",
+    title: "The Knight",
+    year: 2023,
+    instagram: "",
+    width: 72,
+    height: 102,
+    price: 1290,
+    image: knight,
+  },
+  {
+    id: "gilded-butterfly",
+    slug: "gilded-butterfly",
+    title: "The Gilded Butterfly",
+    year: 2026,
+    instagram: "",
+    width: 72,
+    height: 102,
+    price: 1490,
+    image: butterfly,
   },
 ];
 export const frames: Frame[] = [
