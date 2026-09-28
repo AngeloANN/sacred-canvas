@@ -25,18 +25,11 @@ export const Route = createFileRoute("/gallery")({
 });
 function Gallery() {
   const [index, setIndex] = useState(0);
-  const [turn, setTurn] = useState<"next" | "prev" | null>(null);
   const startX = useRef(0);
   const navigate = useNavigate();
-  const move = useCallback(
-    (dir: 1 | -1) => {
-      if (turn) return;
-      setTurn(dir === 1 ? "next" : "prev");
-      window.setTimeout(() => setIndex((i) => (i + dir + artworks.length) % artworks.length), 390);
-      window.setTimeout(() => setTurn(null), 810);
-    },
-    [turn],
-  );
+  const move = useCallback((dir: 1 | -1) => {
+    setIndex((i) => (i + dir + artworks.length) % artworks.length);
+  }, []);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight") move(1);
@@ -61,7 +54,7 @@ function Gallery() {
       >
         <div
           onClick={() => navigate({ to: "/artwork/$slug", params: { slug: art.slug } })}
-          className={`${turn === "next" ? "turn-next" : turn === "prev" ? "turn-prev" : ""} relative flex h-full cursor-pointer flex-col items-center justify-center bg-[radial-gradient(ellipse_at_50%_5%,var(--color-background)_0%,var(--color-museum-wall)_52%,var(--color-border)_100%)] pb-8 [transform-style:preserve-3d]`}
+          className={`relative flex h-full cursor-pointer flex-col items-center justify-center bg-[url('/museum-wall.webp')] bg-cover bg-bottom pb-8 transform-3d`}
         >
           <img
             src={art.image}
@@ -70,7 +63,7 @@ function Gallery() {
             alt={art.title}
             className="max-h-[62vh] max-w-[72vw] object-contain shadow-[0_24px_45px_-18px_var(--color-foreground)]"
           />
-          <div className="mt-6 min-w-52 bg-background px-5 py-3 shadow-sm">
+          <div className="mt-6 min-w-52 bg-background px-5 py-3 text-center shadow-md">
             <h1 className="font-display text-xl">{art.title}</h1>
             <p className="text-xs text-muted-foreground">
               {art.year} · {art.medium}

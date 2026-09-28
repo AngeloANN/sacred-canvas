@@ -180,8 +180,6 @@
 @utility animate-lamp-wake { animation: lamp-wake 3.2s ease-out both; }
 @utility animate-glow-wake { animation: glow-wake 3.2s ease-out both; }
 @utility animate-reveal { animation: reveal 3.5s ease-out both; }
-@utility turn-next { animation: wall-turn-next .8s cubic-bezier(.65,0,.2,1); }
-@utility turn-prev { animation: wall-turn-prev .8s cubic-bezier(.65,0,.2,1); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; scroll-behavior: auto !important; }
