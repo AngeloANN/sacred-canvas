@@ -1,5 +1,5 @@
 import adam from "@/assets/destruction-of-adam.png";
-import bread from "@/assets/bread-and-ash.jpg";
+import dove from "@/assets/landing-crow.jpg";
 import gate from "@/assets/the-narrow-gate.jpg";
 
 export type Artwork = {
@@ -33,15 +33,15 @@ export const artworks: Artwork[] = [
     image: adam,
   },
   {
-    id: "bread-and-ash",
-    slug: "bread-and-ash",
-    title: "Bread and Ash",
+    id: "dove-from-heaven",
+    slug: "dove-from-heaven",
+    title: "Then he sent out a dove",
     year: 2025,
-    instagram: "https://www.instagram.com/p/DdVPrF4t59m/",
-    width: 92,
-    height: 92,
-    price: 126000,
-    image: bread,
+    instagram: "https://www.instagram.com/p/DH7NTtVtYgx/",
+    width: 90,
+    height: 50,
+    price: 1260,
+    image: dove,
   },
   {
     id: "the-narrow-gate",
