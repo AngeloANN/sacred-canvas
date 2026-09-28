@@ -1,6 +1,6 @@
 import adam from "@/assets/destruction-of-adam.png";
 import dove from "@/assets/landing-crow.jpg";
-import gate from "@/assets/the-narrow-gate.jpg";
+import reach from "@/assets/everlasting-reach.jpg";
 
 export type Artwork = {
   id: string;
@@ -44,15 +44,15 @@ export const artworks: Artwork[] = [
     image: dove,
   },
   {
-    id: "the-narrow-gate",
-    slug: "the-narrow-gate",
-    title: "The Narrow Gate",
+    id: "everlasting-reach",
+    slug: "everlasting-reach",
+    title: "Everlastingly Reaching",
     year: 2026,
-    instagram: "https://www.instagram.com/p/DdVPrF4t59m/",
+    instagram: "https://www.instagram.com/p/DUxVxOqjmjl/",
     width: 72,
     height: 96,
-    price: 139000,
-    image: gate,
+    price: 1490,
+    image: reach,
   },
 ];
 export const frames: Frame[] = [
