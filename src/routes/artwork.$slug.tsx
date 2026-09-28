@@ -33,18 +33,7 @@ function ArtworkDetail() {
   const art = Route.useLoaderData();
   const cart = useCart();
   const [frame, setFrame] = useState(frames[0]);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const audio = useRef<HTMLAudioElement>(null);
-  useEffect(() => {
-    setMuted(localStorage.getItem("icxc-muted") === "true");
-  }, []);
-  const toggleMute = () => {
-    setMuted((v) => {
-      localStorage.setItem("icxc-muted", String(!v));
-      return !v;
-    });
-  };
+
   const frameClass = {
     none: "p-0",
     black: "border-[18px] border-primary p-1",
@@ -68,32 +57,6 @@ function ArtworkDetail() {
           </div>
         </section>
         <section className="flex flex-col justify-center">
-          <div className="mb-10 flex items-center gap-2 text-xs uppercase text-muted-foreground">
-            <Button
-              variant="icon"
-              size="icon"
-              aria-label={playing ? "Pause ambient music" : "Play ambient music"}
-              onClick={() => {
-                const player = audio.current;
-                if (!player) return;
-                if (playing) player.pause();
-                else void player.play();
-                setPlaying(!playing);
-              }}
-            >
-              {playing ? <Pause /> : <Play />}
-            </Button>
-            <Button
-              variant="icon"
-              size="icon"
-              aria-label={muted ? "Unmute" : "Mute"}
-              onClick={toggleMute}
-            >
-              {muted ? <VolumeX /> : <Volume2 />}
-            </Button>
-            <span>Ambient score</span>
-            <audio ref={audio} loop muted={muted} />
-          </div>
           <h1 className="font-display text-6xl font-normal md:text-8xl">{art.title}</h1>
           <p className="mt-3 text-lg text-muted-foreground">
             {art.year} · {art.medium}
