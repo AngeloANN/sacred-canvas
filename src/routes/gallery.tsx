@@ -66,7 +66,7 @@ function Gallery() {
           <div className="mt-6 min-w-52 bg-background px-5 py-3 text-center shadow-md">
             <h1 className="font-display text-xl">{art.title}</h1>
             <p className="text-xs text-muted-foreground">
-              {art.year} · {art.medium}
+              {art.year}
             </p>
           </div>
         </div>
