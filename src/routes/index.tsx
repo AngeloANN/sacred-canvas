@@ -52,7 +52,7 @@ function Index() {
   const mediaClass = "h-full w-full -scale-x-100 object-cover object-[62%_50%] md:object-center";
 
   return (
-    <main className="relative min-h-screen overflow-hidden text-ivory">
+    <main className="relative min-h-screen overflow-hidden bg-night text-ivory">
       <Header />
 
       <div className="relative flex min-h-screen flex-col pt-16 md:block">
