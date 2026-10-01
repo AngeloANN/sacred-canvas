@@ -29,7 +29,7 @@ export function Header() {
           </Link>
         </nav>
         <Link to="/" className="absolute left-1/2 -translate-x-1/2" aria-label="ICXC XZS home">
-          <img src="/android-chrome-512x512.png" alt="ICXC XZS" className="h-10 w-auto" />
+          <img src="/favicon.ico" alt="ICXC XZS" className="h-10 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
           <CartDrawer />
