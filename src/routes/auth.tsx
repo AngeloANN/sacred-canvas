@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Header } from "@/components/store/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -86,10 +85,7 @@ function AuthPage() {
           size="lg"
           className="border-ivory/30 text-ivory hover:bg-ivory/10"
           onClick={async () => {
-            const result = await lovable.auth.signInWithOAuth("google", {
-              redirect_uri: window.location.origin + "/auth",
-            });
-            if (result.error) setMessage(result.error.message);
+            const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin + "/account" } }); if (error) setMessage(error.message);
           }}
         >
           Continue with Google
