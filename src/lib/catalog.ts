@@ -87,7 +87,7 @@ export const frames: Frame[] = [
   { name: "White", price: 1800, key: "white" },
 ];
 export const money = (cents: number) =>
-  new Intl.NumberFormat("en-US", {
+  new Intl.NumberFormat("en-CA", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
