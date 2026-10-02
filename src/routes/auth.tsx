@@ -23,21 +23,29 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (busy) return; // ignore extra clicks while it's working
+    setBusy(true);
     setMessage("");
-    if (mode === "sign-up") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: window.location.origin + "/account" },
-      });
-      if (error) return setMessage(error.message);
-      if (!data.session) return setMessage("Check your email to confirm your account.");
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return setMessage(error.message);
-      void navigate({ to: "/account" });
+    try {
+      if (mode === "sign-up") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin + "/account" },
+        });
+        if (error) return setMessage(error.message);
+        if (!data.session) return setMessage("Check your email to confirm your account.");
+        void navigate({ to: "/account" }); // signed in right away → go to account
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) return setMessage(error.message);
+        void navigate({ to: "/account" });
+      }
+    } finally {
+      setBusy(false);
     }
   };
   return (
@@ -71,7 +79,13 @@ function AuthPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="h-12 rounded-none border-ivory/30 bg-transparent text-ivory placeholder:text-ivory/45"
           />
-          <Button variant="gallery" size="lg" className="w-full bg-ivory text-night" type="submit">
+          <Button
+            variant="gallery"
+            size="lg"
+            className="w-full bg-ivory text-night"
+            type="submit"
+            disabled={busy}
+          >
             {mode === "sign-in" ? "Sign in" : "Create account"}
           </Button>
         </form>
@@ -85,7 +99,11 @@ function AuthPage() {
           size="lg"
           className="border-ivory/30 text-ivory hover:bg-ivory/10"
           onClick={async () => {
-            const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin + "/account" } }); if (error) setMessage(error.message);
+            const { error } = await supabase.auth.signInWithOAuth({
+              provider: "google",
+              options: { redirectTo: window.location.origin + "/account" },
+            });
+            if (error) setMessage(error.message);
           }}
         >
           Continue with Google
