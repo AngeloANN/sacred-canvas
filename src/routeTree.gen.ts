@@ -16,7 +16,10 @@ import { Route as FashionRouteImport } from './routes/fashion'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe-webhook'
 import { Route as ArtworkSlugRouteImport } from './routes/artwork.$slug'
+import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout.success'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,11 +55,27 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe-webhook',
+  path: '/api/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArtworkSlugRoute = ArtworkSlugRouteImport.update({
   id: '/artwork/$slug',
   path: '/artwork/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCheckoutSuccessRoute =
+  AuthenticatedCheckoutSuccessRouteImport.update({
+    id: '/success',
+    path: '/success',
+    getParentRoute: () => AuthenticatedCheckoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -65,7 +84,10 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/reset-password': typeof ResetPasswordRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/checkout': typeof AuthenticatedCheckoutRouteWithChildren
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/artwork/$slug': typeof ArtworkSlugRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -74,7 +96,10 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/reset-password': typeof ResetPasswordRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/checkout': typeof AuthenticatedCheckoutRouteWithChildren
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/artwork/$slug': typeof ArtworkSlugRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +110,10 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRouteWithChildren
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/artwork/$slug': typeof ArtworkSlugRoute
+  '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +124,10 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reset-password'
     | '/account'
+    | '/checkout'
+    | '/api/stripe-webhook'
     | '/artwork/$slug'
+    | '/checkout/success'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -105,7 +136,10 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reset-password'
     | '/account'
+    | '/checkout'
+    | '/api/stripe-webhook'
     | '/artwork/$slug'
+    | '/checkout/success'
   id:
     | '__root__'
     | '/'
@@ -115,7 +149,10 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/reset-password'
     | '/_authenticated/account'
+    | '/_authenticated/checkout'
+    | '/api/stripe-webhook'
     | '/artwork/$slug'
+    | '/_authenticated/checkout/success'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -125,6 +162,7 @@ export interface RootRouteChildren {
   FashionRoute: typeof FashionRoute
   GalleryRoute: typeof GalleryRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   ArtworkSlugRoute: typeof ArtworkSlugRoute
 }
 
@@ -179,6 +217,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/stripe-webhook': {
+      id: '/api/stripe-webhook'
+      path: '/api/stripe-webhook'
+      fullPath: '/api/stripe-webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/artwork/$slug': {
       id: '/artwork/$slug'
       path: '/artwork/$slug'
@@ -186,15 +238,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArtworkSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/checkout/success': {
+      id: '/_authenticated/checkout/success'
+      path: '/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof AuthenticatedCheckoutSuccessRouteImport
+      parentRoute: typeof AuthenticatedCheckoutRoute
+    }
   }
 }
 
+interface AuthenticatedCheckoutRouteChildren {
+  AuthenticatedCheckoutSuccessRoute: typeof AuthenticatedCheckoutSuccessRoute
+}
+
+const AuthenticatedCheckoutRouteChildren: AuthenticatedCheckoutRouteChildren = {
+  AuthenticatedCheckoutSuccessRoute: AuthenticatedCheckoutSuccessRoute,
+}
+
+const AuthenticatedCheckoutRouteWithChildren =
+  AuthenticatedCheckoutRoute._addFileChildren(
+    AuthenticatedCheckoutRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedCheckoutRoute: AuthenticatedCheckoutRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -207,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   FashionRoute: FashionRoute,
   GalleryRoute: GalleryRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   ArtworkSlugRoute: ArtworkSlugRoute,
 }
 export const routeTree = rootRouteImport
