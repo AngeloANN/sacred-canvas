@@ -1,9 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/store/header";
 import { Button } from "@/components/ui/button";
-import { artworks, frames, money } from "@/lib/catalog";
-import { useCart } from "@/components/store/cart";
+import { artworks, formats, money, sizeLabel, type FormatKey } from "@/lib/catalog";
 import { useState } from "react";
 export const Route = createFileRoute("/artwork/$slug")({
   loader: ({ params }) => {
@@ -23,16 +22,18 @@ export const Route = createFileRoute("/artwork/$slug")({
 });
 function ArtworkDetail() {
   const art = Route.useLoaderData();
-  const cart = useCart();
-  const [frame, setFrame] = useState(frames[0]);
+  // Which format and size the customer picked. Starts on the first option of each.
+  const [formatKey, setFormatKey] = useState<FormatKey>("mounted");
+  const format = formats.find((f) => f.key === formatKey)!;
+  const [sizeKey, setSizeKey] = useState(format.sizes[0]!.key);
+  const size = format.sizes.find((s) => s.key === sizeKey) ?? format.sizes[0]!;
 
-  const frameClass = {
-    none: "p-0",
-    black: "border-[18px] border-primary p-1",
-    gold: "border-[20px] border-gold p-2 outline outline-2 outline-gold",
-    wood: "border-[18px] border-amber-900 p-1",
-    white: "border-[18px] border-background p-1",
-  }[frame.key];
+  // Switching format jumps to that format's first size, since the sizes are different.
+  const pickFormat = (key: FormatKey) => {
+    setFormatKey(key);
+    setSizeKey(formats.find((f) => f.key === key)!.sizes[0]!.key);
+  };
+
   return (
     <main className="min-h-screen bg-background">
       <Header />
@@ -46,7 +47,7 @@ function ArtworkDetail() {
       </div>
       <div className="mx-auto grid max-w-[1500px] gap-12 px-5 pb-20 pt-6 lg:grid-cols-[1.3fr_.7fr] lg:px-12">
         <section className="flex min-h-[65vh] items-center justify-center bg-museum-wall p-8 md:p-16">
-          <div className={frameClass}>
+          <div>
             <img
               src={art.image}
               width={1024}
@@ -58,9 +59,7 @@ function ArtworkDetail() {
         </section>
         <section className="flex flex-col justify-center">
           <h1 className="font-display text-6xl font-normal md:text-8xl">{art.title}</h1>
-          <p className="mt-3 text-lg text-muted-foreground">
-            {art.year}
-          </p>
+          <p className="mt-3 text-lg text-muted-foreground">{art.year}</p>
           {art.instagram && (
             <a
               href={art.instagram}
@@ -71,38 +70,42 @@ function ArtworkDetail() {
               See IG post
             </a>
           )}
-          <dl className="mt-8 grid grid-cols-2 border-y border-border py-5 text-sm">
-            <div>
-              <dt className="uppercase text-muted-foreground">Dimensions</dt>
-              <dd className="mt-1 text-lg">
-                {art.width} × {art.height} cm
-              </dd>
-            </div>
-            <div>
-              <dt className="uppercase text-muted-foreground">Original</dt>
-              <dd className="mt-1 text-lg">One of one</dd>
-            </div>
-          </dl>
+          {/* Format: Mounted Print | Canvas */}
           <fieldset className="mt-8">
-            <legend className="mb-3 text-sm uppercase">Select frame</legend>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {frames.map((option) => (
+            <legend className="mb-3 text-sm uppercase">Format</legend>
+            <div className="grid grid-cols-2 gap-2">
+              {formats.map((f) => (
                 <button
-                  key={option.key}
-                  onClick={() => setFrame(option)}
-                  className={`border px-3 py-3 text-left ${option.key === frame.key ? "border-primary bg-secondary" : "border-border"}`}
+                  key={f.key}
+                  onClick={() => pickFormat(f.key)}
+                  className={`border px-3 py-3 ${f.key === formatKey ? "border-primary bg-secondary" : "border-border"}`}
                 >
-                  <span className="block">{option.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {option.price ? `+ ${money(option.price)}` : "Included"}
-                  </span>
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          {/* Size: changes with the format */}
+          <fieldset className="mt-6">
+            <legend className="mb-3 text-sm uppercase">Size</legend>
+            <div className="grid grid-cols-3 gap-2">
+              {format.sizes.map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => setSizeKey(s.key)}
+                  className={`border px-3 py-3 text-left ${s.key === size.key ? "border-primary bg-secondary" : "border-border"}`}
+                >
+                  <span className="block">{sizeLabel(s, art)}</span>
+                  <span className="text-xs text-muted-foreground">{money(s.price)}</span>
                 </button>
               ))}
             </div>
           </fieldset>
           <div className="mt-10 flex items-center justify-between gap-5">
-            <span className="text-3xl">{money(art.price + frame.price)}</span>
-            <Button variant="gallery" size="lg" onClick={() => cart.add(art, frame)}>
+            <span className="text-3xl">{money(size.price)}</span>
+            {/* Temporarily disabled: we connect this to the cart in step 3 */}
+            <Button variant="gallery" size="lg" disabled>
               Add to cart
             </Button>
           </div>

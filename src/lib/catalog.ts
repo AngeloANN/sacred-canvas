@@ -16,11 +16,9 @@ export type Artwork = {
   image: string;
   audio?: string;
 };
-export type Frame = {
-  name: string;
-  price: number;
-  key: "none" | "black" | "gold" | "wood" | "white";
-};
+export type FormatKey = "mounted" | "canvas";
+export type Size = { key: string; w: number; h: number; price: number };
+export type Format = { key: FormatKey; name: string; sizes: Size[] };
 
 export const artworks: Artwork[] = [
   {
@@ -79,16 +77,39 @@ export const artworks: Artwork[] = [
     image: butterfly,
   },
 ];
-export const frames: Frame[] = [
-  { name: "No frame", price: 0, key: "none" },
-  { name: "Black", price: 1800, key: "black" },
-  { name: "Gold ornate", price: 3200, key: "gold" },
-  { name: "Natural wood", price: 2200, key: "wood" },
-  { name: "White", price: 1800, key: "white" },
+
+export const formats: Format[] = [
+  {
+    key: "mounted",
+    name: "Mounted Print",
+    sizes: [
+      { key: "10x8", w: 10, h: 8, price: 5149 },
+      { key: "12x8", w: 12, h: 8, price: 5249 },
+      { key: "12x10", w: 12, h: 10, price: 5899 },
+    ],
+  },
+  {
+    key: "canvas",
+    name: "Canvas",
+    sizes: [
+      { key: "14x8", w: 14, h: 8, price: 6386 },
+      { key: "15x8", w: 15, h: 8, price: 6386 },
+      { key: "16x9", w: 16, h: 9, price: 6794 },
+    ],
+  },
 ];
+
+// Finds the price for a format + size. Returns undefined if that combo doesn't exist.
+export const priceFor = (formatKey: string, sizeKey: string) =>
+  formats.find((f) => f.key === formatKey)?.sizes.find((s) => s.key === sizeKey)?.price;
+
+// Shows a size the right way around for the artwork: tall pieces get 8×10 instead of 10×8.
+export const sizeLabel = (size: Size, artwork: Artwork) =>
+  artwork.height > artwork.width ? `${size.h}×${size.w}"` : `${size.w}×${size.h}"`;
+
 export const money = (cents: number) =>
   new Intl.NumberFormat("en-CA", {
     style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
+    currency: "CAD",
+    minimumFractionDigits: 2,
   }).format(cents / 100);
