@@ -13,4 +13,4 @@ export function getStripe() {
 }
 
 // Must match the currency in money() in src/lib/catalog.ts
-export const STORE_CURRENCY = "usd";
+export const STORE_CURRENCY = "cad";

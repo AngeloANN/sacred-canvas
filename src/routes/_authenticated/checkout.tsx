@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/store/header";
-import { useCart } from "@/components/store/cart";
+import { itemDetails, useCart } from "@/components/store/cart";
 import { Button } from "@/components/ui/button";
 import { money } from "@/lib/catalog";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +33,9 @@ function Checkout() {
 
   useEffect(() => {
     void (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const { data } = await supabase
           .from("profiles")
@@ -46,7 +48,12 @@ function Checkout() {
     })();
   }, []);
 
-  const hasAddress = !!(shipping?.full_name && shipping.address_line1 && shipping.city && shipping.postal_code);
+  const hasAddress = !!(
+    shipping?.full_name &&
+    shipping.address_line1 &&
+    shipping.city &&
+    shipping.postal_code
+  );
 
   const pay = async () => {
     if (paying) return;
@@ -55,7 +62,12 @@ function Checkout() {
     try {
       const { url } = await startCheckout({
         data: {
-          items: cart.items.map((i) => ({ artworkId: i.artwork.id, frameKey: i.frame.key, quantity: i.quantity })),
+          items: cart.items.map((i) => ({
+            artworkId: i.artwork.id,
+            formatKey: i.formatKey,
+            sizeKey: i.sizeKey,
+            quantity: i.quantity,
+          })),
         },
       });
       window.location.href = url; // off to Stripe's secure payment page
@@ -83,16 +95,24 @@ function Checkout() {
             <section>
               <h2 className="font-display text-3xl">Your collection</h2>
               <div className="mt-6 divide-y divide-border border-y border-border">
-                {cart.items.map((item) => (
-                  <div key={`${item.artwork.id}-${item.frame.key}`} className="flex gap-4 py-5">
-                    <img src={item.artwork.image} alt="" className="h-24 w-[72px] object-cover" />
-                    <div className="flex-1">
-                      <h3 className="font-display text-xl">{item.artwork.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.frame.name} · Qty {item.quantity}</p>
+                {cart.items.map((item) => {
+                  const { unitPrice, label } = itemDetails(item);
+                  return (
+                    <div
+                      key={`${item.artwork.id}-${item.formatKey}-${item.sizeKey}`}
+                      className="flex gap-4 py-5"
+                    >
+                      <img src={item.artwork.image} alt="" className="h-24 w-[72px] object-cover" />
+                      <div className="flex-1">
+                        <h3 className="font-display text-xl">{item.artwork.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {label} · Qty {item.quantity}
+                        </p>
+                      </div>
+                      <span>{money(unitPrice * item.quantity)}</span>
                     </div>
-                    <span>{money((item.artwork.price + item.frame.price) * item.quantity)}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
@@ -106,7 +126,9 @@ function Checkout() {
                     <p>{shipping.full_name}</p>
                     <p>{shipping.address_line1}</p>
                     {shipping.address_line2 && <p>{shipping.address_line2}</p>}
-                    <p>{shipping.city}, {shipping.region} {shipping.postal_code}</p>
+                    <p>
+                      {shipping.city}, {shipping.region} {shipping.postal_code}
+                    </p>
                     <p>{shipping.country}</p>
                   </>
                 ) : (
@@ -132,7 +154,9 @@ function Checkout() {
                 {paying ? "Opening secure payment…" : "Pay securely"}
               </Button>
               {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
-              <p className="mt-3 text-xs text-muted-foreground">Payments are handled by Stripe. Your card details never touch this site.</p>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Payments are handled by Stripe. Your card details never touch this site.
+              </p>
             </aside>
           </div>
         )}

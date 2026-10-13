@@ -3,9 +3,8 @@ import { getRequest } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getStripe, STORE_CURRENCY } from "@/lib/stripe.server";
-import { artworks, frames } from "@/lib/catalog";
-
-type CartLine = { artworkId: string; frameKey: string; quantity: number };
+import { artworks, formats, sizeLabel } from "@/lib/catalog.ts";
+type CartLine = { artworkId: string; formatKey: string; sizeKey: string; quantity: number };
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -20,10 +19,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     //    Prices always come from here, never from the browser, so nobody can edit them.
     const lines = data.items.map((line) => {
       const artwork = artworks.find((a) => a.id === line.artworkId);
-      const frame = frames.find((f) => f.key === line.frameKey);
-      if (!artwork || !frame) throw new Error("An item in your cart is no longer available.");
+      const format = formats.find((f) => f.key === line.formatKey);
+      const size = format?.sizes.find((sz) => sz.key === line.sizeKey);
+      if (!artwork || !format || !size)
+        throw new Error("An item in your cart is no longer available.");
       const quantity = Math.min(Math.max(Math.floor(line.quantity) || 1, 1), 10);
-      return { artwork, frame, quantity, unit: artwork.price + frame.price };
+      // e.g. "Canvas · 16×9""
+      const option = `${format.name} · ${sizeLabel(size, artwork)}`;
+      return { artwork, option, quantity, unit: size.price };
     });
     const subtotal = lines.reduce((sum, l) => sum + l.unit * l.quantity, 0);
 
@@ -64,7 +67,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       lines.map((l) => ({
         order_id: order.id,
         artwork_title: l.artwork.title,
-        frame_name: l.frame.name,
+        frame_name: l.option,
         quantity: l.quantity,
         unit_price_cents: l.unit,
       })),
@@ -83,7 +86,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         price_data: {
           currency: STORE_CURRENCY,
           unit_amount: l.unit,
-          product_data: { name: `${l.artwork.title} (${l.frame.name})` },
+          product_data: { name: `${l.artwork.title} (${l.option})` },
         },
       })),
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
