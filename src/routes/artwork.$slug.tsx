@@ -1,9 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { Artwork3D } from "@/components/store/artwork-3d.tsx";
 import { Header } from "@/components/store/header";
 import { Button } from "@/components/ui/button";
 import { artworks, formats, money, sizeLabel, type FormatKey } from "@/lib/catalog";
 import { useState } from "react";
+import { useCart } from "@/components/store/cart.tsx";
 export const Route = createFileRoute("/artwork/$slug")({
   loader: ({ params }) => {
     const artwork = artworks.find((a) => a.slug === params.slug);
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/artwork/$slug")({
 });
 function ArtworkDetail() {
   const art = Route.useLoaderData();
+  const cart = useCart();
   // Which format and size the customer picked. Starts on the first option of each.
   const [formatKey, setFormatKey] = useState<FormatKey>("mounted");
   const format = formats.find((f) => f.key === formatKey)!;
@@ -34,10 +37,15 @@ function ArtworkDetail() {
     setSizeKey(formats.find((f) => f.key === key)!.sizes[0]!.key);
   };
 
+  // Flat or 3D preview
+  const [view, setView] = useState<"flat" | "3d">("flat");
+  // Tall pieces flip the size (10×8 becomes 8×10), same as the size buttons
+  const tall = art.height > art.width;
+
   return (
     <main className="min-h-screen bg-background">
       <Header />
-      <div className="mx-auto max-w-[1500px] px-5 pt-24 lg:px-12">
+      <div className="mx-auto max-w-375 px-5 pt-24 lg:px-12">
         <Link
           to="/gallery"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground transition-colors hover:text-ember"
@@ -45,9 +53,25 @@ function ArtworkDetail() {
           <ArrowLeft className="size-4" /> Back to gallery
         </Link>
       </div>
-      <div className="mx-auto grid max-w-[1500px] gap-12 px-5 pb-20 pt-6 lg:grid-cols-[1.3fr_.7fr] lg:px-12">
+      <div className="mx-auto grid max-w-375 gap-12 px-5 pb-20 pt-6 lg:grid-cols-[1.3fr_.7fr] lg:px-12">
         <section className="flex min-h-[65vh] items-center justify-center bg-museum-wall p-8 md:p-16">
-          <div>
+          {/* Flat|3D switch on the top right of the wall */}
+          <div className="absolute right-4 top-4 flex border border-border bg-background text-xs uppercase ">
+            {/* Boolean to map out the user's choice*/}
+            {(["flat", "3d"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                aria-pressed={view === v}
+                className={`px-3 py-2 ${view === v} ? "bg-primary text-primary-foreground" : ""}`}
+              >
+                {v === "flat" ? "Flat" : "3D view"}
+              </button>
+            ))}
+          </div>
+
+          {/*The view if the option is Flat*/}
+          {view === "flat" ? (
             <img
               src={art.image}
               width={1024}
@@ -55,7 +79,16 @@ function ArtworkDetail() {
               alt={art.title}
               className="max-h-[70vh] w-auto object-contain shadow-2xl"
             />
-          </div>
+          ) : (
+            //The view if the option is 3D
+            <Artwork3D
+              image={art.image}
+              title={art.title}
+              widthIn={tall ? size.h : size.w}
+              heightIn={tall ? size.w : size.h}
+              format={formatKey}
+            />
+          )}
         </section>
         <section className="flex flex-col justify-center">
           <h1 className="font-display text-6xl font-normal md:text-8xl">{art.title}</h1>
@@ -104,8 +137,7 @@ function ArtworkDetail() {
           </fieldset>
           <div className="mt-10 flex items-center justify-between gap-5">
             <span className="text-3xl">{money(size.price)}</span>
-            {/* Temporarily disabled: we connect this to the cart in step 3 */}
-            <Button variant="gallery" size="lg" disabled>
+            <Button variant="gallery" size="lg" onClick={() => cart.add(art, formatKey, size.key)}>
               Add to cart
             </Button>
           </div>
