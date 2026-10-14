@@ -49,15 +49,16 @@ function Index() {
   };
 
   // Video is mirrored (-scale-x-100) so the lamp sits on the left and the empty black space is on the right.
-  const mediaClass = "h-full w-full -scale-x-100 object-cover object-[62%_50%] md:object-center";
+  const mediaClass =
+    "h-full w-full -scale-x-100 object-contain object-bottom md:object-cover md:object-center";
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-night text-ivory">
       <Header />
 
-      <div className="relative flex min-h-screen flex-col pt-16 md:block">
+      <div className="relative flex min-h-screen flex-col-reverse justify-between pt-16 md:block">
         {/* Lamp video / still */}
-        <div className="relative h-[62vh] w-full md:absolute md:inset-0 md:top-16 md:h-auto">
+        <div className="relative aspect-video w-full md:absolute md:inset-0 md:top-16 md:aspect-auto md:h-auto">
           {useStill ? (
             <img
               src="/lamp-on.png"
@@ -79,8 +80,6 @@ function Index() {
               className={mediaClass}
             />
           )}
-          {/* Mobile only: fade the bottom of the video into black so the text below blends in */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-night md:hidden" />
         </div>
 
         {/* Text */}
