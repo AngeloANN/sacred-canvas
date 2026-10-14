@@ -84,7 +84,7 @@ function Index() {
 
         {/* Text */}
         <div
-          className={`relative z-10 flex flex-1 flex-col items-center justify-start px-6 pb-16 text-center transition-all duration-[1400ms] ease-out md:absolute md:right-[6%] md:top-1/2 md:w-[34%] md:-translate-y-1/2 md:items-start md:p-0 md:text-left ${
+          className={`relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center transition-all duration-[1400ms] ease-out md:absolute md:right-[6%] md:top-1/2 md:w-[34%] md:-translate-y-1/2 md:items-start md:p-0 md:text-left ${
             showText ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
           }`}
         >
