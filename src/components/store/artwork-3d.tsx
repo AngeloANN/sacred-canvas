@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { FormatKey } from "@/lib/catalog";
 
 type Props = {
@@ -24,8 +24,22 @@ const MAX_H = 420;
 const START = { x: -8, y: -28 };
 
 export function Artwork3D({ image, title, widthIn, heightIn, format }: Props) {
+  // 0. How much room we actually have. On a phone that's less than MAX_W,
+  //    so we measure the box and shrink to fit instead of overflowing the screen.
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [room, setRoom] = useState(MAX_W);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => setRoom(entry!.contentRect.width));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const maxW = Math.min(MAX_W, room) * 0.85; // leave space for the corners when it's turned
+  const maxH = Math.min(MAX_H, maxW * 1.1);
+
   // 1. Turn inches into screen pixels, keeping the real proportions.
-  const scale = Math.min(MAX_W / widthIn, MAX_H / heightIn);
+  const scale = Math.min(maxW / widthIn, maxH / heightIn);
   const W = Math.round(widthIn * scale);
   const H = Math.round(heightIn * scale);
   const D = Math.max(3, Math.round(DEPTH_IN[format] * scale)); // never thinner than 3px
@@ -58,7 +72,7 @@ export function Artwork3D({ image, title, widthIn, heightIn, format }: Props) {
   const edge = (position: string, w: number, h: number): CSSProperties =>
     wrap
       ? {
-          backgroundImage: `url(${image})`,
+          backgroundImage: `url("${image}")`,
           backgroundSize: `${W}px ${H}px`,
           backgroundPosition: position,
           filter: "brightness(0.75)", // sides catch less light than the front
@@ -70,10 +84,11 @@ export function Artwork3D({ image, title, widthIn, heightIn, format }: Props) {
   const face = "absolute left-1/2 top-1/2 [backface-visibility:hidden]";
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex w-full flex-col items-center gap-4">
       <div
         className="cursor-grab touch-none select-none active:cursor-grabbing [perspective:1400px]"
-        style={{ width: MAX_W, maxWidth: "100%", height: MAX_H + 40 }}
+        ref={boxRef}
+        style={{ width: MAX_W, maxWidth: "100%", height: maxH + 60 }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -93,7 +108,7 @@ export function Artwork3D({ image, title, widthIn, heightIn, format }: Props) {
             style={{
               width: W,
               height: H,
-              backgroundImage: `url(${image})`,
+              backgroundImage: `url("${image}")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               transform: `translate(-50%, -50%) translateZ(${D / 2}px)`,
@@ -143,7 +158,7 @@ export function Artwork3D({ image, title, widthIn, heightIn, format }: Props) {
           />
         </div>
       </div>
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">
+      <p className="text-xs uppercase tracking-widest text-ivory/70">
         Drag to turn · double-click to reset
       </p>
     </div>

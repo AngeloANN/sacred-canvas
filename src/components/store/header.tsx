@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { UserRound } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./cart";
 import { supabase } from "@/integrations/supabase/client";
 
 export function Header() {
   const [signedIn, setSignedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // phone menu open or closed
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
     const { data } = supabase.auth.onAuthStateChange((_event, session) =>
@@ -17,7 +18,20 @@ export function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-border bg-background text-foreground">
       <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between px-4 md:px-8">
-        <nav className="flex items-center gap-6 text-sm uppercase">
+        {/* Phone: menu button. Hidden on bigger screens (md: and up). */}
+        <Button
+          variant="icon"
+          size="icon"
+          className="md:hidden"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </Button>
+
+        {/* Computer: the links in a row. Hidden on phones. */}
+        <nav className="hidden items-center gap-6 text-sm uppercase md:flex">
           <Link to="/" activeProps={{ className: "text-ember" }}>
             Home
           </Link>
@@ -40,6 +54,29 @@ export function Header() {
           </Button>
         </div>
       </div>
+
+      {/* Phone menu: drops down under the header when open */}
+      {menuOpen && (
+        <nav className="flex flex-col border-b border-border bg-background px-4 py-2 text-sm uppercase md:hidden">
+          {(
+            [
+              ["/", "Home"],
+              ["/gallery", "Gallery"],
+              ["/fashion", "Fashion"],
+            ] as const
+          ).map(([to, label]) => (
+            <Link
+              key={to}
+              to={to}
+              onClick={() => setMenuOpen(false)}
+              activeProps={{ className: "text-ember" }}
+              className="border-b border-border py-3 last:border-0"
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }

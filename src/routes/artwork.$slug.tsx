@@ -54,7 +54,7 @@ function ArtworkDetail() {
         </Link>
       </div>
       <div className="mx-auto grid max-w-375 gap-12 px-5 pb-20 pt-6 lg:grid-cols-[1.3fr_.7fr] lg:px-12">
-        <section className="relative flex min-h-[65vh] items-center justify-center bg-[#490153] p-8 md:p-16">
+        <section className="relative flex min-h-[65vh] items-center justify-center overflow-hidden bg-[#490153] px-4 pb-8 pt-16 md:p-16">
           {/* Flat|3D switch on the top right of the wall */}
           <div className="absolute right-4 top-4 flex border border-border bg-background text-xs uppercase ">
             {/* Boolean to map out the user's choice*/}
@@ -63,7 +63,7 @@ function ArtworkDetail() {
                 key={v}
                 onClick={() => setView(v)}
                 aria-pressed={view === v}
-                className={`px-3 py-2 ${view === v} ? "bg-primary text-primary-foreground" : ""}`}
+                className={`px-3 py-2 ${view === v ? "bg-primary text-primary-foreground" : ""}`}
               >
                 {v === "flat" ? "Flat" : "3D view"}
               </button>
