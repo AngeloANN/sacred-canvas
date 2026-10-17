@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/store/header";
+import { TwinkleField } from "@/components/store/twinkle-field.tsx";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,6 +28,7 @@ const TEXT_REVEAL_AT = 3;
 
 function Index() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaBoxRef = useRef<HTMLDivElement>(null);
   const [showText, setShowText] = useState(false);
   const [useStill, setUseStill] = useState(false);
 
@@ -58,7 +60,10 @@ function Index() {
 
       <div className="relative flex min-h-screen flex-col-reverse justify-between pt-16 md:block">
         {/* Lamp video / still */}
-        <div className="relative aspect-video w-full md:absolute md:inset-0 md:top-16 md:aspect-auto md:h-auto">
+        <div
+          ref={mediaBoxRef}
+          className="relative aspect-video w-full md:absolute md:inset-0 md:top-16 md:aspect-auto md:h-auto"
+        >
           {useStill ? (
             <img
               src="/lamp-on.png"
@@ -83,6 +88,7 @@ function Index() {
         </div>
 
         {/* Text */}
+        <TwinkleField mediaBoxRef={mediaBoxRef} />
         <div
           className={`relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center transition-all duration-[1400ms] ease-out md:absolute md:right-[6%] md:top-1/2 md:w-[34%] md:-translate-y-1/2 md:items-start md:p-0 md:text-left ${
             showText ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
